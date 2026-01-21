@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>🔥 이준영 티켓팅 실전 시뮬레이터</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background:#f5f6f7;
+}
+.app {
+  max-width:420px;
+  margin:auto;
+  min-height:100vh;
+  background:white;
+  box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+.header {
+  background:#ef2b2a;
+  color:white;
+  padding:14px;
+  font-weight:700;
+  text-align:center;
+}
+.section {
+  padding:14px;
+}
+.center { text-align:center; }
+.hidden { display:none; }
+
+.timer {
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.notice {
+  font-size:13px;
+  color:#666;
+  line-height:1.4;
+  background:#f8f8f8;
+  padding:10px;
+  border-radius:8px;
+  margin-top:10px;
+}
+
+.btn-main {
+  width:100%;
+  background:#ef2b2a;
+  color:white;
+  border:none;
+  padding:14px;
+  font-size:16px;
+  border-radius:6px;
+  font-weight:700;
+  margin-top:12px;
+  cursor:pointer;
+}
+.btn-main:disabled { background:#ccc; }
+
+.queue-box {
+  margin-top:12px;
+  background:#f1f1f1;
+  border-radius:8px;
+  overflow:hidden;
+}
+.queue-bar {
+  height:14px;
+  background:#ef2b2a;
+  width:0%;
+  transition:width 0.35s linear;
+}
+.queue-info {
+  margin-top:8px;
+  font-size:14px;
+  line-height:1.6;
+}
+.queue-alert {
+  color:#ef2b2a;
+  font-weight:700;
+  margin-top:6px;
+}
+
+.captcha-box input {
+  width:140px;
+  padding:8px;
+  font-size:18px;
+  text-align:center;
+  letter-spacing:4px;
+}
+
+.captcha-code {
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.seat-area {
+  display:grid;
+  grid-template-columns: repeat(22, 1fr);
+  gap:3px;
+  margin-top:10px;
+}
+.seat {
+  background:#d9fdd3;
+  border-radius:3px;
+  font-size:10px;
+  padding:4px 0;
+  text-align:center;
+  cursor:pointer;
+}
+.seat.vip { background:#ffb3b3; }
+.seat.r { background:#ffe0b3; }
+.seat.sold { background:#999; color:white; cursor:not-allowed; }
+.seat.selected { outline:2px solid #ef2b2a; }
+
+.zone-legend {
+  font-size:12px;
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.payment-btn {
+  background:#222;
+  color:white;
+  padding:12px;
+  margin-top:8px;
+  border-radius:6px;
+  text-align:center;
+  cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">🔥 이준영 티켓팅</div>
+
+  <!-- HOME -->
+  <div id="home" class="section center">
+    <div class="timer" id="clock">06:59:57</div>
+    <div id="openMsg" style="font-size:14px;color:#888;">예매 오픈까지 잠시만 기다려 주세요.</div>
+
+    <div class="notice">
+      ⚠ 티켓팅 유의사항<br>
+      • 예매 시작과 동시에 접속자가 폭주할 수 있습니다.<br>
+      • 좌석은 실시간으로 소진됩니다.<br>
+      • 매크로 감지 시 자동 차단됩니다.<br>
+      • 1인 최대 2매까지 예매 가능합니다.
+    </div>
+
+    <button id="reserveBtn" class="btn-main hidden">예매하기</button>
+  </div>
+
+  <!-- QUEUE -->
+  <div id="queue" class="section hidden">
+    <div class="center" style="font-weight:700;font-size:16px;">접속 대기 중...</div>
+
+    <div class="queue-box">
+      <div class="queue-bar" id="queueBar"></div>
+    </div>
+
+    <div class="queue-info" id="queueInfo"></div>
+    <div class="queue-alert hidden" id="queueAlert">곧 입장합니다! 준비하세요!</div>
+  </div>
+
+  <!-- CAPTCHA -->
+  <div id="captcha" class="section hidden center">
+    <div class="captcha-code" id="captchaCode"></div>
+    <div class="captcha-box">
+      <input id="captchaInput" maxlength="5" placeholder="ABCDE">
+    </div>
+    <button class="btn-main" id="captchaBtn">확인</button>
+  </div>
+
+  <!-- SEATS -->
+  <div id="seats" class="section hidden">
+    <div style="font-weight:700;">좌석 선택 (최대 2매)</div>
+    <div class="seat-area" id="seatArea"></div>
+
+    <div class="zone-legend">
+      <span>🔴 VIP</span>
+      <span>🟠 R석</span>
+      <span>🟢 S석</span>
+    </div>
+
+    <button class="btn-main" id="payBtn" disabled>결제하기</button>
+  </div>
+
+  <!-- PAYMENT -->
+  <div id="payment" class="section hidden center">
+    <div style="font-weight:700;font-size:16px;">결제 수단 선택</div>
+
+    <div class="payment-btn">무통장입금</div>
+    <div class="payment-btn">토스</div>
+    <div class="payment-btn">카카오페이</div>
+    <div class="payment-btn">네이버페이</div>
+  </div>
+
+</div>
+
+<script>
+/* ===== GLOBAL ===== */
+const home = document.getElementById("home");
+const queue = document.getElementById("queue");
+const captcha = document.getElementById("captcha");
+const seatsPage = document.getElementById("seats");
+const payment = document.getElementById("payment");
+
+const clockEl = document.getElementById("clock");
+const reserveBtn = document.getElementById("reserveBtn");
+
+const queueBar = document.getElementById("queueBar");
+const queueInfo = document.getElementById("queueInfo");
+const queueAlert = document.getElementById("queueAlert");
+
+const captchaCodeEl = document.getElementById("captchaCode");
+const captchaInput = document.getElementById("captchaInput");
+const captchaBtn = document.getElementById("captchaBtn");
+
+const seatArea = document.getElementById("seatArea");
+const payBtn = document.getElementById("payBtn");
+
+/* ===== TIME ===== */
+let now = new Date();
+now.setHours(6,59,57,0);
+const openTime = new Date();
+openTime.setHours(7,0,0,0);
+
+/* ===== STATE ===== */
+let clickedAt = null;
+let clickDelay = 0;
+let queuePos = 0;
+let queueBehind = 0;
+let queueInterval = null;
+
+let captchaAnswer = "";
+let seatSoldTimer = null;
+let seatSellSpeed = 500;
+
+let selectedSeats = [];
+let seatData = [];
+
+/* ===== CLOCK ===== */
+function startClock() {
+  setInterval(() => {
+    now = new Date(now.getTime() + 1000);
+    const h = String(now.getHours()).padStart(2,"0");
+    const m = String(now.getMinutes()).padStart(2,"0");
+    const s = String(now.getSeconds()).padStart(2,"0");
+    clockEl.textContent = `${h}:${m}:${s}`;
+
+    if (now >= openTime) {
+      reserveBtn.classList.remove("hidden");
+      document.getElementById("openMsg").textContent = "예매가 시작되었습니다.";
+    }
+  }, 1000);
+}
+
+/* ===== QUEUE ===== */
+function startQueue() {
+  home.classList.add("hidden");
+  queue.classList.remove("hidden");
+
+  clickDelay = (clickedAt - openTime) / 1000;
+
+  if (clickDelay < 0.2) queuePos = randomInt(80,150);
+  else if (clickDelay < 0.3) queuePos = randomInt(200,400);
+  else if (clickDelay < 0.4) queuePos = randomInt(500,900);
+  else queuePos = randomInt(900,1800);
+
+  queueBehind = randomInt(queuePos * 3, queuePos * 6);
+  updateQueueUI();
+
+  let speed = 110;
+  queueInterval = setInterval(() => {
+    if (queuePos > 0) {
+      let drop;
+      if (queuePos > 100) drop = randomInt(40,120);
+      else if (queuePos > 30) drop = randomInt(10,30);
+      else drop = 1;
+
+      queuePos = Math.max(0, queuePos - drop);
+      queueBehind = Math.max(0, queueBehind - drop * randomInt(2,5));
+      updateQueueUI();
+
+      const progress = 100 - (queuePos / startQueue.startPos) * 100;
+      queueBar.style.width = progress + "%";
+
+      if (queuePos <= 10 && queuePos > 0) {
+        queueAlert.classList.remove("hidden");
+        speed = 300;
+      }
+
+      if (queuePos === 0) {
+        clearInterval(queueInterval);
+        enterCaptcha();
+      }
+    }
+  }, speed);
+
+  startQueue.startPos = queuePos;
+}
+
+function updateQueueUI() {
+  queueInfo.innerHTML = `
+    내 순번: <b>${queuePos}</b>번<br>
+    내 뒤 대기자: <b>${queueBehind}</b>명
+  `;
+}
+
+/* ===== CAPTCHA ===== */
+function enterCaptcha() {
+  queue.classList.add("hidden");
+  captcha.classList.remove("hidden");
+
+  captchaAnswer = randomCode();
+  captchaCodeEl.textContent = captchaAnswer;
+
+  adjustSeatSellSpeed();
+  startSeatSelling();
+}
+
+captchaBtn.onclick = () => {
+  if (captchaInput.value.toUpperCase() !== captchaAnswer) {
+    alert("보안문자 오류!");
+    captchaInput.value = "";
+    return;
+  }
+  captcha.classList.add("hidden");
+  seatsPage.classList.remove("hidden");
+};
+
+/* ===== SEATS ===== */
+function buildSeats() {
+  seatArea.innerHTML = "";
+  seatData = [];
+  const rows = 15;
+  const cols = 22;
+  const aisles = [7,14];
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (aisles.includes(c)) {
+        const gap = document.createElement("div");
+        seatArea.appendChild(gap);
+        continue;
+      }
+
+      const id = String.fromCharCode(65+r) + (c+1);
+      let zone = "s";
+      if (r < 4) zone = "vip";
+      else if (r < 9) zone = "r";
+
+      const seat = document.createElement("div");
+      seat.className = `seat ${zone}`;
+      seat.textContent = id;
+      seat.dataset.id = id;
+
+      seat.onclick = () => seatClick(seat);
+
+      seatArea.appendChild(seat);
+      seatData.push({id, r, c, zone, sold:false, el:seat});
+    }
+  }
+}
+
+function seatClick(seatEl) {
+  if (seatEl.classList.contains("sold")) return;
+
+  const id = seatEl.dataset.id;
+
+  if (seatEl.classList.contains("selected")) {
+    seatEl.classList.remove("selected");
+    selectedSeats = selectedSeats.filter(s => s !== id);
+  } else {
+    if (selectedSeats.length >= 2) {
+      alert("최대 2석까지만 선택 가능합니다.");
+      return;
+    }
+    seatEl.classList.add("selected");
+    selectedSeats.push(id);
+  }
+
+  payBtn.disabled = selectedSeats.length === 0;
+}
+
+/* ===== REAL-TIME SEAT SELLING ===== */
+function adjustSeatSellSpeed() {
+  // 늦게 예매 누를수록 더 빠르게 좌석 소멸
+  if (clickDelay < 0.2) seatSellSpeed = 650;
+  else if (clickDelay < 0.3) seatSellSpeed = 450;
+  else if (clickDelay < 0.4) seatSellSpeed = 320;
+  else seatSellSpeed = 200;
+}
+
+function startSeatSelling() {
+  if (seatSoldTimer) clearInterval(seatSoldTimer);
+
+  seatSoldTimer = setInterval(() => {
+    const alive = seatData.filter(s => !s.sold);
+    if (alive.length === 0) {
+      alert("전석 매진! 티켓팅 실패 😭");
+      location.reload();
+      return;
+    }
+
+    alive.sort((a,b)=>a.r-b.r);
+    const burst = randomInt(4, 12);
+    for (let i=0;i<burst;i++) {
+      const pool = alive.slice(0, Math.max(20, alive.length*0.4));
+      const target = pool[randomInt(0,pool.length-1)];
+      if (!target || target.sold) continue;
+      target.sold = true;
+      target.el.classList.add("sold");
+      target.el.textContent = "X";
+    }
+  }, seatSellSpeed);
+}
+
+/* ===== PAYMENT ===== */
+payBtn.onclick = () => {
+  if (Math.random() < 0.15) {
+    alert("결제 오류 발생! 좌석 선택 화면으로 돌아갑니다.");
+    selectedSeats.forEach(id=>{
+      const s = seatData.find(x=>x.id===id);
+      if (s) s.el.classList.remove("selected");
+    });
+    selectedSeats = [];
+    payBtn.disabled = true;
+    return;
+  }
+
+  seatsPage.classList.add("hidden");
+  payment.classList.remove("hidden");
+};
+
+/* ===== UTIL ===== */
+function randomCode() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let s="";
+  for(let i=0;i<5;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+function randomInt(a,b) {
+  return Math.floor(Math.random()*(b-a+1))+a;
+}
+
+/* ===== EVENTS ===== */
+reserveBtn.onclick = () => {
+  clickedAt = new Date();
+  startQueue();
+};
+
+/* ===== INIT ===== */
+buildSeats();
+startClock();
+</script>
+
+</body>
+</html>
