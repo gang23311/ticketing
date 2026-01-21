@@ -2,461 +2,479 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>🔥 이준영 티켓팅 실전 시뮬레이터</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이준영 팬미팅</title>
 <style>
-body {
+body{
   margin:0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background:#f5f6f7;
+  font-family:'Segoe UI','Apple SD Gothic Neo',sans-serif;
+  background:#f4f6f9;
 }
-.app {
-  max-width:420px;
-  margin:auto;
-  min-height:100vh;
-  background:white;
-  box-shadow:0 0 15px rgba(0,0,0,0.1);
+.app{
+  width:390px;
+  height:760px;
+  margin:20px auto;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  overflow:hidden;
+  position:relative;
 }
-.header {
-  background:#ef2b2a;
-  color:white;
-  padding:14px;
-  font-weight:700;
+.header{
+  background:#e6002d;
+  color:#fff;
+  padding:12px;
   text-align:center;
-}
-.section {
-  padding:14px;
-}
-.center { text-align:center; }
-.hidden { display:none; }
-
-.timer {
-  font-size:22px;
   font-weight:700;
-  margin-bottom:8px;
 }
-.notice {
-  font-size:13px;
-  color:#666;
-  line-height:1.4;
-  background:#f8f8f8;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
+.clock-box{
+  padding:14px;
+  text-align:center;
+  border-bottom:1px solid #ddd;
 }
+.clock{font-size:26px;font-weight:700;}
+.status{font-size:13px;color:#666;margin-top:4px;}
 
-.btn-main {
+.notice{
+  padding:16px;
+  font-size:13px;
+  line-height:1.6;
+  color:#444;
+}
+.notice h3{
+  margin-top:0;
+  font-size:15px;
+}
+.notice ul{padding-left:18px;}
+.notice li{margin-bottom:6px;}
+
+.reserve-btn{
   width:100%;
-  background:#ef2b2a;
-  color:white;
+  background:#e6002d;
+  color:#fff;
   border:none;
   padding:14px;
   font-size:16px;
-  border-radius:6px;
-  font-weight:700;
-  margin-top:12px;
-  cursor:pointer;
-}
-.btn-main:disabled { background:#ccc; }
-
-.queue-box {
-  margin-top:12px;
-  background:#f1f1f1;
   border-radius:8px;
-  overflow:hidden;
-}
-.queue-bar {
-  height:14px;
-  background:#ef2b2a;
-  width:0%;
-  transition:width 0.35s linear;
-}
-.queue-info {
-  margin-top:8px;
-  font-size:14px;
-  line-height:1.6;
-}
-.queue-alert {
-  color:#ef2b2a;
   font-weight:700;
-  margin-top:6px;
+  cursor:pointer;
+  display:none;
 }
 
-.captcha-box input {
-  width:140px;
-  padding:8px;
-  font-size:18px;
-  text-align:center;
-  letter-spacing:4px;
+.waiting, .captcha, .seat-screen, .payment, .result{
+  display:none;
+  padding:16px;
+  height:100%;
+  box-sizing:border-box;
 }
 
-.captcha-code {
-  font-size:20px;
-  font-weight:700;
-  margin-bottom:8px;
-}
-
-.seat-area {
-  display:grid;
-  grid-template-columns: repeat(22, 1fr);
-  gap:3px;
+.wait-title{font-weight:700;margin-bottom:8px;}
+.wait-num{font-size:32px;font-weight:800;}
+.wait-sub{font-size:13px;color:#555;margin-top:4px;}
+.bar-wrap{height:10px;background:#eee;border-radius:5px;overflow:hidden;margin:10px 0;}
+.bar{height:100%;width:0%;background:#e6002d;transition:width .15s linear;}
+.ready-msg{
   margin-top:10px;
+  color:#e6002d;
+  font-weight:700;
+  display:none;
 }
-.seat {
-  background:#d9fdd3;
-  border-radius:3px;
-  font-size:10px;
-  padding:4px 0;
+
+/* CAPTCHA */
+.captcha-box{
+  margin-top:40px;
   text-align:center;
-  cursor:pointer;
 }
-.seat.vip { background:#ffb3b3; }
-.seat.r { background:#ffe0b3; }
-.seat.sold { background:#999; color:white; cursor:not-allowed; }
-.seat.selected { outline:2px solid #ef2b2a; }
-
-.zone-legend {
-  font-size:12px;
-  margin-top:8px;
-  display:flex;
-  justify-content:space-between;
-}
-
-.payment-btn {
-  background:#222;
-  color:white;
-  padding:12px;
-  margin-top:8px;
+.captcha-code{
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:6px;
+  background:#eee;
+  padding:10px;
   border-radius:6px;
+  display:inline-block;
+}
+.captcha input{
+  margin-top:16px;
+  padding:10px;
+  width:100%;
+  font-size:16px;
+}
+.captcha button{
+  margin-top:12px;
+  width:100%;
+  padding:12px;
+  background:#e6002d;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  font-weight:700;
+}
+
+/* SEAT */
+.seat-screen h3{margin-top:0;}
+.stage{
   text-align:center;
+  font-size:13px;
+  margin-bottom:8px;
+  color:#555;
+}
+.seat-map{
+  display:grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap:4px;
+}
+.seat{
+  width:100%;
+  padding-top:100%;
+  position:relative;
+  background:#4caf50;
+  border-radius:4px;
   cursor:pointer;
 }
+.seat.vip{background:#d32f2f;}
+.seat.r{background:#1976d2;}
+.seat.s{background:#4caf50;}
+.seat.taken{background:#ccc; cursor:not-allowed;}
+.seat.selected{outline:3px solid #ff9800;}
+
+.seat::after{
+  content:attr(data-id);
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:8px;
+  color:#fff;
+}
+
+/* PAYMENT */
+.payment h3{margin-top:0;}
+.pay-btn{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:6px;
+  font-weight:700;
+  cursor:pointer;
+}
+.kakao{background:#fee500;}
+.toss{background:#1e88e5;color:#fff;}
+.naver{background:#03c75a;color:#fff;}
+.bank{background:#555;color:#fff;}
+
+/* RESULT */
+.result h3{text-align:center;}
+.result p{text-align:center;font-size:14px;}
+
 </style>
 </head>
 <body>
 
 <div class="app">
-  <div class="header">🔥 이준영 티켓팅</div>
+  <div class="header">이준영 팬미팅</div>
 
-  <!-- HOME -->
-  <div id="home" class="section center">
-    <div class="timer" id="clock">06:59:57</div>
-    <div id="openMsg" style="font-size:14px;color:#888;">예매 오픈까지 잠시만 기다려 주세요.</div>
-
-    <div class="notice">
-      ⚠ 티켓팅 유의사항<br>
-      • 예매 시작과 동시에 접속자가 폭주할 수 있습니다.<br>
-      • 좌석은 실시간으로 소진됩니다.<br>
-      • 매크로 감지 시 자동 차단됩니다.<br>
-      • 1인 최대 2매까지 예매 가능합니다.
-    </div>
-
-    <button id="reserveBtn" class="btn-main hidden">예매하기</button>
+  <div class="clock-box" id="clockBox">
+    <div class="clock" id="clock">06:59:57</div>
+    <div class="status" id="status">예매 오픈 대기 중</div>
   </div>
 
-  <!-- QUEUE -->
-  <div id="queue" class="section hidden">
-    <div class="center" style="font-weight:700;font-size:16px;">접속 대기 중...</div>
+  <!-- NOTICE -->
+  <div class="notice" id="noticeArea">
+    <h3>🎟️ 티켓 예매 안내</h3>
+    <ul>
+      <li>예매는 <b>1인 최대 2매</b>까지 가능합니다.</li>
+      <li>매크로 사용 시 자동 취소될 수 있습니다.</li>
+      <li>예매 시작과 동시에 대기열이 생성됩니다.</li>
+      <li>결제 단계에서 <b>시간 초과 시 자동 취소</b>됩니다.</li>
+      <li>좌석 선택 후 결제 완료 전까지는 예매가 확정되지 않습니다.</li>
+      <li>양예서 제작ㅋㅋ. <li>
+    </ul>
+  </div>
 
-    <div class="queue-box">
-      <div class="queue-bar" id="queueBar"></div>
-    </div>
+  <!-- MAIN -->
+  <div class="main" id="mainArea" style="padding:16px;">
+    <button class="reserve-btn" id="reserveBtn">예매하기</button>
+  </div>
 
-    <div class="queue-info" id="queueInfo"></div>
-    <div class="queue-alert hidden" id="queueAlert">곧 입장합니다! 준비하세요!</div>
+  <!-- WAITING -->
+  <div class="waiting" id="waitingArea">
+    <div class="wait-title">대기열</div>
+    <div>내 순번</div>
+    <div class="wait-num" id="myRank">-</div>
+    <div class="bar-wrap"><div class="bar" id="waitBar"></div></div>
+    <div class="wait-sub" id="behindNum">뒤에 대기자: - 명</div>
+    <div class="wait-sub" id="clickSpeedText"></div>
+    <div class="ready-msg" id="readyMsg">🔥 곧 입장합니다! 준비하세요!</div>
   </div>
 
   <!-- CAPTCHA -->
-  <div id="captcha" class="section hidden center">
-    <div class="captcha-code" id="captchaCode"></div>
+  <div class="captcha" id="captchaArea">
     <div class="captcha-box">
-      <input id="captchaInput" maxlength="5" placeholder="ABCDE">
+      <div>보안문자를 입력하세요</div>
+      <div class="captcha-code" id="captchaCode">ABCDE</div>
+      <input type="text" id="captchaInput" placeholder="영문 5자리 입력">
+      <button id="captchaBtn">확인</button>
+      <div id="captchaMsg" style="color:red;font-size:13px;margin-top:8px;"></div>
     </div>
-    <button class="btn-main" id="captchaBtn">확인</button>
   </div>
 
-  <!-- SEATS -->
-  <div id="seats" class="section hidden">
-    <div style="font-weight:700;">좌석 선택 (최대 2매)</div>
-    <div class="seat-area" id="seatArea"></div>
-
-    <div class="zone-legend">
-      <span>🔴 VIP</span>
-      <span>🟠 R석</span>
-      <span>🟢 S석</span>
-    </div>
-
-    <button class="btn-main" id="payBtn" disabled>결제하기</button>
+  <!-- SEAT -->
+  <div class="seat-screen" id="seatArea">
+    <h3>좌석 선택</h3>
+    <div class="stage">무대</div>
+    <div class="seat-map" id="seatMap"></div>
+    <button class="reserve-btn" id="toPayBtn" style="margin-top:10px;display:none;">결제하기</button>
   </div>
 
   <!-- PAYMENT -->
-  <div id="payment" class="section hidden center">
-    <div style="font-weight:700;font-size:16px;">결제 수단 선택</div>
-
-    <div class="payment-btn">무통장입금</div>
-    <div class="payment-btn">토스</div>
-    <div class="payment-btn">카카오페이</div>
-    <div class="payment-btn">네이버페이</div>
+  <div class="payment" id="paymentArea">
+    <h3>결제 수단 선택</h3>
+    <button class="pay-btn kakao" data-method="카카오페이">카카오페이</button>
+    <button class="pay-btn toss" data-method="토스">토스</button>
+    <button class="pay-btn naver" data-method="네이버페이">네이버페이</button>
+    <button class="pay-btn bank" data-method="무통장입금">무통장입금</button>
   </div>
 
+  <!-- RESULT -->
+  <div class="result" id="resultArea">
+    <h3 id="resultTitle"></h3>
+    <p id="resultMsg"></p>
+    <button class="reserve-btn" id="restartBtn" style="display:block;margin-top:20px;">다시하기</button>
+  </div>
 </div>
 
 <script>
-/* ===== GLOBAL ===== */
-const home = document.getElementById("home");
-const queue = document.getElementById("queue");
-const captcha = document.getElementById("captcha");
-const seatsPage = document.getElementById("seats");
-const payment = document.getElementById("payment");
+/* ================= TIME ================= */
+let h=6,m=59,s=57;
+const clockEl=document.getElementById("clock");
+const statusEl=document.getElementById("status");
+const reserveBtn=document.getElementById("reserveBtn");
+const noticeArea=document.getElementById("noticeArea");
 
-const clockEl = document.getElementById("clock");
-const reserveBtn = document.getElementById("reserveBtn");
+function pad(n){return n<10?"0"+n:n;}
 
-const queueBar = document.getElementById("queueBar");
-const queueInfo = document.getElementById("queueInfo");
-const queueAlert = document.getElementById("queueAlert");
+let openMoment=null;
 
-const captchaCodeEl = document.getElementById("captchaCode");
-const captchaInput = document.getElementById("captchaInput");
-const captchaBtn = document.getElementById("captchaBtn");
+function tick(){
+  s++;
+  if(s>=60){s=0;m++;}
+  if(m>=60){m=0;h++;}
+  clockEl.textContent=`${pad(h)}:${pad(m)}:${pad(s)}`;
 
-const seatArea = document.getElementById("seatArea");
-const payBtn = document.getElementById("payBtn");
-
-/* ===== TIME ===== */
-let now = new Date();
-now.setHours(6,59,57,0);
-const openTime = new Date();
-openTime.setHours(7,0,0,0);
-
-/* ===== STATE ===== */
-let clickedAt = null;
-let clickDelay = 0;
-let queuePos = 0;
-let queueBehind = 0;
-let queueInterval = null;
-
-let captchaAnswer = "";
-let seatSoldTimer = null;
-let seatSellSpeed = 500;
-
-let selectedSeats = [];
-let seatData = [];
-
-/* ===== CLOCK ===== */
-function startClock() {
-  setInterval(() => {
-    now = new Date(now.getTime() + 1000);
-    const h = String(now.getHours()).padStart(2,"0");
-    const m = String(now.getMinutes()).padStart(2,"0");
-    const s = String(now.getSeconds()).padStart(2,"0");
-    clockEl.textContent = `${h}:${m}:${s}`;
-
-    if (now >= openTime) {
-      reserveBtn.classList.remove("hidden");
-      document.getElementById("openMsg").textContent = "예매가 시작되었습니다.";
-    }
-  }, 1000);
-}
-
-/* ===== QUEUE ===== */
-function startQueue() {
-  home.classList.add("hidden");
-  queue.classList.remove("hidden");
-
-  clickDelay = (clickedAt - openTime) / 1000;
-
-  if (clickDelay < 0.2) queuePos = randomInt(80,150);
-  else if (clickDelay < 0.3) queuePos = randomInt(200,400);
-  else if (clickDelay < 0.4) queuePos = randomInt(500,900);
-  else queuePos = randomInt(900,1800);
-
-  queueBehind = randomInt(queuePos * 3, queuePos * 6);
-  updateQueueUI();
-
-  let speed = 110;
-  queueInterval = setInterval(() => {
-    if (queuePos > 0) {
-      let drop;
-      if (queuePos > 100) drop = randomInt(40,120);
-      else if (queuePos > 30) drop = randomInt(10,30);
-      else drop = 1;
-
-      queuePos = Math.max(0, queuePos - drop);
-      queueBehind = Math.max(0, queueBehind - drop * randomInt(2,5));
-      updateQueueUI();
-
-      const progress = 100 - (queuePos / startQueue.startPos) * 100;
-      queueBar.style.width = progress + "%";
-
-      if (queuePos <= 10 && queuePos > 0) {
-        queueAlert.classList.remove("hidden");
-        speed = 300;
-      }
-
-      if (queuePos === 0) {
-        clearInterval(queueInterval);
-        enterCaptcha();
-      }
-    }
-  }, speed);
-
-  startQueue.startPos = queuePos;
-}
-
-function updateQueueUI() {
-  queueInfo.innerHTML = `
-    내 순번: <b>${queuePos}</b>번<br>
-    내 뒤 대기자: <b>${queueBehind}</b>명
-  `;
-}
-
-/* ===== CAPTCHA ===== */
-function enterCaptcha() {
-  queue.classList.add("hidden");
-  captcha.classList.remove("hidden");
-
-  captchaAnswer = randomCode();
-  captchaCodeEl.textContent = captchaAnswer;
-
-  adjustSeatSellSpeed();
-  startSeatSelling();
-}
-
-captchaBtn.onclick = () => {
-  if (captchaInput.value.toUpperCase() !== captchaAnswer) {
-    alert("보안문자 오류!");
-    captchaInput.value = "";
-    return;
-  }
-  captcha.classList.add("hidden");
-  seatsPage.classList.remove("hidden");
-};
-
-/* ===== SEATS ===== */
-function buildSeats() {
-  seatArea.innerHTML = "";
-  seatData = [];
-  const rows = 15;
-  const cols = 22;
-  const aisles = [7,14];
-
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      if (aisles.includes(c)) {
-        const gap = document.createElement("div");
-        seatArea.appendChild(gap);
-        continue;
-      }
-
-      const id = String.fromCharCode(65+r) + (c+1);
-      let zone = "s";
-      if (r < 4) zone = "vip";
-      else if (r < 9) zone = "r";
-
-      const seat = document.createElement("div");
-      seat.className = `seat ${zone}`;
-      seat.textContent = id;
-      seat.dataset.id = id;
-
-      seat.onclick = () => seatClick(seat);
-
-      seatArea.appendChild(seat);
-      seatData.push({id, r, c, zone, sold:false, el:seat});
-    }
+  if(h===7 && m===0 && s===0){
+    statusEl.textContent="예매 시작!";
+    reserveBtn.style.display="block";
+    noticeArea.style.display="none";
+    openMoment=Date.now();
   }
 }
+setInterval(tick,1000);
 
-function seatClick(seatEl) {
-  if (seatEl.classList.contains("sold")) return;
+/* ================= UI UTILS ================= */
+const mainArea=document.getElementById("mainArea");
+const waitingArea=document.getElementById("waitingArea");
+const captchaArea=document.getElementById("captchaArea");
+const seatArea=document.getElementById("seatArea");
+const paymentArea=document.getElementById("paymentArea");
+const resultArea=document.getElementById("resultArea");
 
-  const id = seatEl.dataset.id;
-
-  if (seatEl.classList.contains("selected")) {
-    seatEl.classList.remove("selected");
-    selectedSeats = selectedSeats.filter(s => s !== id);
-  } else {
-    if (selectedSeats.length >= 2) {
-      alert("최대 2석까지만 선택 가능합니다.");
-      return;
-    }
-    seatEl.classList.add("selected");
-    selectedSeats.push(id);
-  }
-
-  payBtn.disabled = selectedSeats.length === 0;
+function show(area){
+  [mainArea,waitingArea,captchaArea,seatArea,paymentArea,resultArea].forEach(a=>a.style.display="none");
+  area.style.display="block";
 }
 
-/* ===== REAL-TIME SEAT SELLING ===== */
-function adjustSeatSellSpeed() {
-  // 늦게 예매 누를수록 더 빠르게 좌석 소멸
-  if (clickDelay < 0.2) seatSellSpeed = 650;
-  else if (clickDelay < 0.3) seatSellSpeed = 450;
-  else if (clickDelay < 0.4) seatSellSpeed = 320;
-  else seatSellSpeed = 200;
-}
+/* ================= WAITING ================= */
+const myRankEl=document.getElementById("myRank");
+const behindNumEl=document.getElementById("behindNum");
+const waitBar=document.getElementById("waitBar");
+const clickSpeedText=document.getElementById("clickSpeedText");
+const readyMsg=document.getElementById("readyMsg");
 
-function startSeatSelling() {
-  if (seatSoldTimer) clearInterval(seatSoldTimer);
+reserveBtn.onclick=()=>{
+  const clickedAtSec=(Date.now()-openMoment)/1000;
+  show(waitingArea);
 
-  seatSoldTimer = setInterval(() => {
-    const alive = seatData.filter(s => !s.sold);
-    if (alive.length === 0) {
-      alert("전석 매진! 티켓팅 실패 😭");
-      location.reload();
+  let rank;
+  if(clickedAtSec<0.05) rank=5+Math.floor(Math.random()*10);
+  else if(clickedAtSec<0.1) rank=30+Math.floor(Math.random()*50);
+  else if(clickedAtSec<0.2) rank=200+Math.floor(Math.random()*300);
+  else if(clickedAtSec<0.3) rank=800+Math.floor(Math.random()*1200);
+  else if(clickedAtSec<0.4) rank=3000+Math.floor(Math.random()*4000);
+  else rank=8000+Math.floor(Math.random()*10000);
+
+  let behind=rank+Math.floor(Math.random()*8000)+2000;
+
+  myRankEl.textContent=rank.toLocaleString();
+  behindNumEl.textContent=`뒤에 대기자: ${behind.toLocaleString()} 명`;
+  clickSpeedText.textContent=`예매 시작 후 ${clickedAtSec.toFixed(2)}초 뒤 클릭`;
+
+  const total=rank;
+
+  const interval=setInterval(()=>{
+    if(rank<=0){
+      clearInterval(interval);
+      startCaptcha();
       return;
     }
 
-    alive.sort((a,b)=>a.r-b.r);
-    const burst = randomInt(4, 12);
-    for (let i=0;i<burst;i++) {
-      const pool = alive.slice(0, Math.max(20, alive.length*0.4));
-      const target = pool[randomInt(0,pool.length-1)];
-      if (!target || target.sold) continue;
-      target.sold = true;
-      target.el.classList.add("sold");
-      target.el.textContent = "X";
+    let drop;
+    if(rank>2000) drop=Math.floor(Math.random()*400)+150;
+    else if(rank>500) drop=Math.floor(Math.random()*120)+40;
+    else if(rank>100) drop=Math.floor(Math.random()*40)+15;
+    else if(rank>20) drop=Math.floor(Math.random()*10)+4;
+    else drop=1;
+
+    rank-=drop;
+    if(rank<0) rank=0;
+
+    let behindChange=Math.floor(Math.random()*300)-120;
+    behind+=behindChange;
+    if(behind<0) behind=0;
+
+    myRankEl.textContent=rank.toLocaleString();
+    waitBar.style.width=((total-rank)/total*100)+"%";
+    behindNumEl.textContent=`뒤에 대기자: ${behind.toLocaleString()} 명`;
+
+    if(rank<=10){
+      readyMsg.style.display="block";
     }
-  }, seatSellSpeed);
-}
-
-/* ===== PAYMENT ===== */
-payBtn.onclick = () => {
-  if (Math.random() < 0.15) {
-    alert("결제 오류 발생! 좌석 선택 화면으로 돌아갑니다.");
-    selectedSeats.forEach(id=>{
-      const s = seatData.find(x=>x.id===id);
-      if (s) s.el.classList.remove("selected");
-    });
-    selectedSeats = [];
-    payBtn.disabled = true;
-    return;
-  }
-
-  seatsPage.classList.add("hidden");
-  payment.classList.remove("hidden");
+  }, rank<=10 ? 700 : 180);
 };
 
-/* ===== UTIL ===== */
-function randomCode() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+/* ================= CAPTCHA ================= */
+const captchaCodeEl=document.getElementById("captchaCode");
+const captchaInput=document.getElementById("captchaInput");
+const captchaBtn=document.getElementById("captchaBtn");
+const captchaMsg=document.getElementById("captchaMsg");
+
+function randomCaptcha(){
+  const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let s="";
   for(let i=0;i<5;i++) s+=chars[Math.floor(Math.random()*chars.length)];
   return s;
 }
-function randomInt(a,b) {
-  return Math.floor(Math.random()*(b-a+1))+a;
+
+function startCaptcha(){
+  captchaInput.value="";
+  captchaMsg.textContent="";
+  captchaCodeEl.textContent=randomCaptcha();
+  show(captchaArea);
 }
 
-/* ===== EVENTS ===== */
-reserveBtn.onclick = () => {
-  clickedAt = new Date();
-  startQueue();
+captchaBtn.onclick=()=>{
+  if(captchaInput.value.toUpperCase()!==captchaCodeEl.textContent){
+    captchaMsg.textContent="보안문자가 일치하지 않습니다.";
+    return;
+  }
+  startSeat();
 };
 
-/* ===== INIT ===== */
-buildSeats();
-startClock();
+/* ================= SEAT ================= */
+const seatMap=document.getElementById("seatMap");
+const toPayBtn=document.getElementById("toPayBtn");
+
+let seats=[];
+let selectedSeats=[];
+
+function startSeat(){
+  show(seatArea);
+  seatMap.innerHTML="";
+  seats=[];
+  selectedSeats=[];
+  toPayBtn.style.display="none";
+
+  const rows=15;
+  const cols=20;
+  const total=rows*cols;
+
+  for(let i=0;i<total;i++){
+    const seat=document.createElement("div");
+    seat.className="seat s";
+    seat.dataset.index=i;
+    seat.textContent="";
+    seatMap.appendChild(seat);
+    seats.push(seat);
+  }
+
+  startSeatDisappear();
+}
+
+function startSeatDisappear(){
+  setInterval(()=>{
+    const available=seats.filter(s=>!s.classList.contains("taken") && !s.classList.contains("selected"));
+    if(available.length===0) return;
+
+    const speed=available.length>200?8:available.length>100?5:available.length>50?3:1;
+
+    for(let i=0;i<speed;i++){
+      if(available.length===0) break;
+      const s=available.splice(Math.floor(Math.random()*available.length),1)[0];
+      s.classList.add("taken");
+    }
+  },200);
+}
+
+seatMap.onclick=(e)=>{
+  const seat=e.target;
+  if(!seat.classList.contains("seat") || seat.classList.contains("taken")) return;
+
+  if(seat.classList.contains("selected")){
+    seat.classList.remove("selected");
+    selectedSeats=selectedSeats.filter(s=>s!==seat);
+  }else{
+    if(selectedSeats.length>=2) return;
+    seat.classList.add("selected");
+    selectedSeats.push(seat);
+  }
+
+  toPayBtn.style.display=selectedSeats.length>0?"block":"none";
+};
+
+toPayBtn.onclick=()=>{
+  startPayment();
+};
+
+/* ================= PAYMENT ================= */
+const paymentButtons=document.querySelectorAll(".pay-btn");
+
+function startPayment(){
+  show(paymentArea);
+}
+
+paymentButtons.forEach(btn=>{
+  btn.onclick=()=>{
+    const fail=Math.random()<0.15;
+    if(fail){
+      alert("❌ 결제 실패! 좌석이 다른 사람에게 선점되었습니다.");
+      selectedSeats.forEach(s=>s.classList.add("taken"));
+      selectedSeats=[];
+      startSeat();
+    }else{
+      showResult(true, btn.dataset.method);
+    }
+  };
+});
+
+/* ================= RESULT ================= */
+const resultTitle=document.getElementById("resultTitle");
+const resultMsg=document.getElementById("resultMsg");
+const restartBtn=document.getElementById("restartBtn");
+
+function showResult(success, method){
+  show(resultArea);
+  if(success){
+    resultTitle.textContent="예매 완료!";
+    resultMsg.textContent=`${method} 결제가 완료되었습니다.`;
+  }else{
+    resultTitle.textContent="❌ 예매 실패";
+    resultMsg.textContent="다시 시도해주세요.";
+  }
+}
+
+restartBtn.onclick=()=>{
+  location.reload();
+};
 </script>
 
 </body>
